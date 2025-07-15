@@ -13,6 +13,14 @@ class EDA:
             else:
                 inferred[col] = 'Categorical'
         return inferred
+        
+    @staticmethod
+    def convert_column_types(df, types):
+        return df
+
+     @staticmethod
+    def 모든_그래프_그리기(df):
+        st.write("📊 (여기에 모든 그래프 출력!)")
 
 eda = EDA()
 
