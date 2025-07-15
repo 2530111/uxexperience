@@ -32,7 +32,7 @@ with st.expander('전체 데이터 보기'):
 if st.session_state['data_loaded']:
     data = st.session_state['data']
     st.subheader("분석할 열을 선택해주세요.")
-    st.success(f"이 데이터는 {data.shape[0]}개의 행(가로줄), {data.shape[1]}개의 열(세로줄)로 이루어진 데이터입니다. 이중 분석할 열만 선택해주세요.")
+    st.success(f"이 데이터는 {data.shape[0]}개의 행(가로줄), {data.shape[1]}개의 열(세로줄)로 이루어진 데이터입니다. 이중 분석할 열만 선택해주세요. 본 데이터셋은 열이 많아 몇개만 골라서 분석하는 걸 추천합니다.")
     if st.checkbox('모든 열 선택하기', key='select_all', value = data.columns.all()):
         default_columns = data.columns.tolist() if 'select_all' in st.session_state and st.session_state['select_all'] else []
     else:
@@ -91,3 +91,34 @@ if st.session_state.get('columns_selected', False):
             st.session_state['user_column_types'] = user_column_types
             st.session_state['types_set'] = True
             st.success("데이터 유형 변경완료!")
+            
+st.session_state['types_set']:
+st.subheader("📊 데이터 한꺼번에 요약과 시각화")
+converted_data = eda.convert_column_types(data_selected, st.session_state['user_column_types'])
+st.success(f"위에서 설정한 데이터의 열의 개수가 {len(converted_data.columns)}개네요! 그러면, {len(converted_data.columns)}*{len(converted_data.columns)} = {len(converted_data.columns)**2}개의 그래프가 그려집니다. 대각선에는 일변량 자료의 데이터 분포가, 나머지 칸에는 두 변량의 관계에 대한 그래프가 그려집니다. 전체 시각화를 보며, 의미있는 패턴을 빠르게 찾아보세요. ")
+st.session_state['converted_data'] = converted_data
+   
+try:
+    tab1, tab2  = st.tabs(['데이터 시각화','기술통계량 확인하기'])
+    with tab1:
+        eda.모든_그래프_그리기(converted_data)
+        st.session_state['viz'] = True
+    with tab2:
+        for column, col_type in user_column_types.items():
+             st.write(f"**{column}** ({col_type})")
+            if col_type == 'Numeric':
+                numeric_descriptive = pd.DataFrame(converted_data[column].describe()).T
+                numeric_descriptive.columns = ['총 개수', '평균', '표준편차', '최솟값', '제1사분위수', '중앙값', '제3사분위수', '최댓값']
+                st.write(numeric_descriptive)
+            elif col_type == 'Categorical':
+                categoric_descriptive = pd.DataFrame(converted_data[column].value_counts()).T
+                categoric_descriptive.index = ["개수"]
+                st.write(categoric_descriptive.style.background_gradient(axis=1))
+
+
+
+
+
+
+
+
