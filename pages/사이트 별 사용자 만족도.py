@@ -18,7 +18,7 @@ if st.session_state['data_loaded']:
     data = st.session_state['data']
     st.subheader("분석할 열을 선택해주세요.")
     st.success(f"이 데이터는 {data.shape[0]}개의 행, {data.shape[1]}개의 열로 이루어진 데이터입니다. 열이 많으니 몇 개만 골라서 분석하는 걸 추천합니다.")
-     if st.checkbox('모든 열 선택하기', key='select_all', value = data.columns.all()):
+    if st.checkbox('모든 열 선택하기', key='select_all', value = data.columns.all()):
         default_columns = data.columns.tolist() if 'select_all' in st.session_state and st.session_state['select_all'] else []
     else:
         default_columns = data.columns.tolist() if 'selected_columns' not in st.session_state else st.session_state['selected_columns']
