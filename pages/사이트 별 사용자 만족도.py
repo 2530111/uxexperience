@@ -1,8 +1,8 @@
 import streamlit as st
-import mataplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import pandas as pd
 
-file path = 'UI_UX_Dataset.csv'
+file_path = 'UI_UX_Dataset.csv'
 data = pd.read_csv(file path)
 
 st.header("UI/UX user interaction dataset across popular digital platforms")
