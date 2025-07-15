@@ -1,6 +1,8 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
+import statool.eda as eda 
+
 
 file_path = 'UI_UX_Dataset.csv'
 data = pd.read_csv(file_path)
