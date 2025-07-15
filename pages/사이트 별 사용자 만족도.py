@@ -30,4 +30,59 @@ if st.session_state['data_loaded']:
     if st.button('열 선택 완료!'):
         st.session_state['columns_selected'] = True
         st.success("열 선택 완료!")
- 
+
+if st.session_state['columns_selected']:
+    st.success("데이터를 살펴보고, 각 변수가 수치형인지 범주형인지 확인해보세요.")
+    if st.session_state['selected_columns'] is not None:
+        data_selected = st.session_state['data'][st.session_state['selected_columns']]
+        inferred_types = eda.infer_column_types(data_selected)
+        user_column_types = {}
+
+        options_en = ['Numeric', 'Categorical']
+        options_kr = ["수치형", "범주형"]
+        options_dic = {'수치형': 'Numeric', '범주형': 'Categorical'}
+        
+        # 반반 나눠서 나열
+        col1, col2 = st.columns(2)
+        keys = list(inferred_types.keys())
+        half = len(keys) // 2 
+
+        dict1 = {key: inferred_types[key] for key in keys[:half]}
+        dict2 = {key: inferred_types[key] for key in keys[half:]}
+
+        with col1:
+            for column, col_type in dict2.items():
+                default_index = options_en.index(col_type)
+                user_col_type = st.radio(
+                    f"'{column}'의 유형:",
+                    options_kr,
+                    index=default_index,
+                    key=column
+                )
+                user_column_types[column] = options_dic[user_col_type]
+
+
+
+        with col2:
+            for column, col_type in dict1.items():
+                default_index = options_en.index(col_type)
+                user_col_type = st.radio(
+                    f"'{column}'의 유형:",
+                    options_kr,
+                    index=default_index,
+                    key=column
+                )
+                user_column_types[column] = options_dic[user_col_type]
+        # for col in df_selected.columns:
+        #     col_type = st.selectbox(f"{col} 유형 선택", ['Numeric', 'Categorical'], index=0 if inferred_types[col] == 'Numeric' else 1, key=col)
+        #     user_column_types[col] = col_type
+        if st.button('유형 변경 완료!'):
+            st.session_state['user_column_types'] = user_column_types
+            st.session_state['types_set'] = True
+            st.success("데이터 유형 변경완료!")
+
+
+
+
+
+
