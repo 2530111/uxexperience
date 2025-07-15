@@ -19,12 +19,12 @@ if st.session_state['data_loaded']:
     st.subheader("분석할 열을 선택해주세요.")
     st.success(f"이 데이터는 {data.shape[0]}개의 행(가로줄), {data.shape[1]}개의 열(세로줄)로 이루어진 데이터입니다. 이중 분석할 열만 선택해주세요.")
     if st.checkbox('모든 열 선택하기', key='select_all', value = data.columns.all()):
-        default_columns = df.columns.tolist() if 'select_all' in st.session_state and st.session_state['select_all'] else []
+        default_columns = data.columns.tolist() if 'select_all' in st.session_state and st.session_state['select_all'] else []
     else:
-        default_columns = df.columns.tolist() if 'selected_columns' not in st.session_state else st.session_state['selected_columns']
+        default_columns = data.columns.tolist() if 'selected_columns' not in st.session_state else st.session_state['selected_columns']
 
-    selected_columns = st.multiselect('분석하고자 하는 열을 선택하세요:', st.session_state['df'].columns.tolist(), default=default_columns)
-    st.write(df[selected_columns].head())
+    selected_columns = st.multiselect('분석하고자 하는 열을 선택하세요:', st.session_state['data'].columns.tolist(), default=default_columns)
+    st.write(data[selected_columns].head())
 
     st.session_state['selected_columns'] = selected_columns
     if st.button('열 선택 완료!'):
