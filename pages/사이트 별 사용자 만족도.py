@@ -1,6 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 
 class EDA:
     @staticmethod
@@ -18,28 +19,44 @@ class EDA:
         return df
 
     @staticmethod
-    def 모든_그래프_그리기(df):
-        num_cols = len(df.columns)
-        fig, axes = plt.subplots(num_cols, num_cols, figsize=(4*num_cols, 4*num_cols))
+    import seaborn as sns
 
-        for i in range(num_cols):
-            for j in range(num_cols):
-                ax = axes[i, j]
-                x = df.iloc[:, j]
-                y = df.iloc[:, i]
+def 모든_그래프_그리기(df, types):
+    num_cols = len(df.columns)
+    fig, axes = plt.subplots(num_cols, num_cols, figsize=(4*num_cols, 4*num_cols))
 
-                if i == j:
-                    ax.hist(x.dropna(), bins=30, color='skyblue', edgecolor='black')
-                    ax.set_title(f"Histogram of {df.columns[i]}")
+    for i in range(num_cols):
+        for j in range(num_cols):
+            ax = axes[i, j]
+            x = df.iloc[:, j]
+            y = df.iloc[:, i]
+            x_name = df.columns[j]
+            y_name = df.columns[i]
+
+            x_type = types[x_name]
+            y_type = types[y_name]
+
+            if i == j:
+                # 수치형: hist + KDE
+                if x_type == 'Numeric':
+                    sns.histplot(x, kde=True, ax=ax, color='orange')
                 else:
-                    ax.scatter(x, y, alpha=0.5)
-                    ax.set_xlabel(df.columns[j])
-                    ax.set_ylabel(df.columns[i])
+                    sns.countplot(x=x, ax=ax, palette='pastel')
+                ax.set_title(f"{x_name}")
+            else:
+                if x_type == 'Numeric' and y_type == 'Numeric':
+                    sns.scatterplot(x=x, y=y, ax=ax, alpha=0.5)
+                elif x_type == 'Categorical' and y_type == 'Numeric':
+                    sns.boxplot(x=x, y=y, ax=ax, palette='Set2')
+                elif x_type == 'Numeric' and y_type == 'Categorical':
+                    sns.boxplot(x=y, y=x, ax=ax, palette='Set2')
+                elif x_type == 'Categorical' and y_type == 'Categorical':
+                    sns.countplot(x=x, hue=y, ax=ax)
+                ax.set_xlabel(x_name)
+                ax.set_ylabel(y_name)
 
-        plt.tight_layout()
-        st.pyplot(fig)
-
-eda = EDA()
+    plt.tight_layout()
+    st.pyplot(fig)
 
 file_path = 'UI_UX_Dataset.csv'
 data = pd.read_csv(file_path)
